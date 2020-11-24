@@ -12,7 +12,7 @@
 //static int sweeptime = 1 * 250;
 static int sweeptime = 5;
 
-#define NUM_STATES 4
+#define NUM_STATES 5
 static uint8_t stateIndex = 0;
 
 static uint8_t colorState = 0;
@@ -70,18 +70,22 @@ void loop()
 	else if (stateIndex == 1)
 	{
 		// Color play state
-		colorStateAction(up_was_pressed, down_was_pressed);
+		light_show_controller->startAnimation(10000);
+		sunTestStateAction(up_was_pressed, down_was_pressed);
 	}
 	else if (stateIndex == 2)
+	{
+		// Color play state
+		colorStateAction(up_was_pressed, down_was_pressed);
+	}
+	else if (stateIndex == 3)
 	{
 		// Display time state
 		lights->displayTime(clock->getHour(), clock->getMin(), clock->getSec());
 	}
-	else if (stateIndex == 3)
+	else if (stateIndex == 4)
 	{
 		// Off state (do nothing because lights are always off after state change)
-		byte rgb[3] = {65, 65, 255};
-		light_show_controller->startAnimation(0, rgb, rgb);
 	}
 	else
 	{
@@ -141,6 +145,18 @@ void alarmStateAction()
 	else
 	{
 		lights->turnOff();
+	}
+}
+
+void sunTestStateAction(bool up, bool down)
+{
+	if (up || down)
+	{
+		light_show_controller->startAnimation(10000);
+	}
+	else
+	{
+		light_show_controller->animationUpdate();
 	}
 }
 

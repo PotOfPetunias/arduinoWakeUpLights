@@ -10,10 +10,11 @@ class LightShowController
 private:
     /* data */
     LightHandler *lights;
+    unsigned long start_time;
 public:
     LightShowController(LightHandler *lights);
     ~LightShowController();
-    void startAnimation(int iterations, byte start_color[3], byte end_color[3]);
+    void startAnimation(unsigned long duration); // Duration is is milliseconds
     void animationUpdate();
 };
 
@@ -26,13 +27,16 @@ LightShowController::~LightShowController()
 {
 }
 
-void LightShowController::startAnimation(int iterations, byte start_color[3], byte end_color[3])
+void LightShowController::startAnimation(unsigned long duration)
 {
-    this->lights->setAllToColor(sun_data[1]);
+    this->start_time = millis();
+    this->lights->setAllToColor(sun_data[0]);
 }
 
 void LightShowController::animationUpdate()
 {
+    unsigned long elapsed = millis() - this->start_time;
+
 
 }
 #endif
