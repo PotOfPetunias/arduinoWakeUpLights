@@ -70,7 +70,6 @@ void loop()
 	else if (stateIndex == 1)
 	{
 		// Color play state
-		light_show_controller->startAnimation(10000);
 		sunTestStateAction(up_was_pressed, down_was_pressed);
 	}
 	else if (stateIndex == 2)
@@ -103,6 +102,8 @@ void handleStateChange()
 		else
 			stateIndex += 1;
 		lights->turnOff();
+		Serial.print("Now in state: ");
+		Serial.println(stateIndex);
 	}
 }
 
@@ -150,9 +151,9 @@ void alarmStateAction()
 
 void sunTestStateAction(bool up, bool down)
 {
-	if (up || down)
+	if (!light_show_controller->isAnimationRunning() || up || down)
 	{
-		light_show_controller->startAnimation(10000);
+		light_show_controller->startAnimation(60000);
 	}
 	else
 	{
