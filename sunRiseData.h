@@ -2,8 +2,9 @@
 #define SUN_RISE_DATA
 
 
-unsigned long sun_data[14] =   {0x000001,
-                                0x000002,
+unsigned long sun_data[15] =   {0x010000,
+                                0x020000,
+                                0x050000,
                                 0x100000,
                                 0x200000,
                                 0x401000,

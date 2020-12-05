@@ -26,7 +26,7 @@ ClockHandler::ClockHandler(int nothing)
 {
     clock.begin();
     // Set sketch compiling time
-    // clock.setDateTime(__DATE__, __TIME__);
+    clock.setDateTime(__DATE__, __TIME__);
 }
 
 uint8_t ClockHandler::getHour()

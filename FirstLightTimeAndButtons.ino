@@ -7,10 +7,10 @@
 #define BTN_DOWN 9
 #define BTN_STATE 10
 
-// Time to make animation last
-//                    Min * scale for animation time
-//static int sweeptime = 1 * 250;
-static int sweeptime = 5;
+// Time to make animation last in minutes
+static int sweeptime = 30;
+static int alarm_hour = 5;
+static int alarm_min = 20;
 
 #define NUM_STATES 5
 static uint8_t stateIndex = 0;
@@ -102,6 +102,7 @@ void handleStateChange()
 		else
 			stateIndex += 1;
 		lights->turnOff();
+		light_show_controller->stopAnimation();
 		Serial.print("Now in state: ");
 		Serial.println(stateIndex);
 	}
@@ -109,51 +110,29 @@ void handleStateChange()
 
 void alarmStateAction()
 {
-	if (clock->getHour() == 5)
+	if (light_show_controller->isAnimationRunning())
 	{
-		if (clock->getMin() > 15 && clock->getMin() < 30)
-		{	
-			byte rgb[3] = {(clock->getMin() - 15)*7, 0, 0};
-			lights->setAllToColor(rgb);
-		}
-		else if (clock->getMin() >= 30 && clock->getMin() < 45)
-		{
-			byte rgb[3] = {128, 128, 0};
-			lights->setAllToColor(rgb);
-		}
-		else if (clock->getMin() >= 45)
-		{
-			byte rgb[3] = {65, 65, 255};
-			lights->setAllToColor(rgb);
-		}
-		else
-		{
-			lights->turnOff();
-		}
+		light_show_controller->animationUpdate();
 	}
-	if (clock->getHour() == 6 && clock->getMin() <= 15)
+	else if (clock->getHour() == alarm_hour && clock->getMin() == alarm_min)
 	{
-		if (clock->getSec() % 2 == 0)
-		{
-			byte rgb[3] = {65, 65, 255};
-			lights->setAllToColor(rgb);
-		}
-		else
-		{
-			lights->turnOff();
-		}
+		unsigned long second = 1000;
+		unsigned long minute = 60;
+		light_show_controller->startAnimation(second * minute * sweeptime);
+		Serial.println("Animation Started");
 	}
-	else
-	{
-		lights->turnOff();
-	}
+	// else
+	// {
+	// 	lights->turnOff();
+	// }
+	
 }
 
 void sunTestStateAction(bool up, bool down)
 {
 	if (!light_show_controller->isAnimationRunning() || up || down)
 	{
-		light_show_controller->startAnimation(60000);
+		light_show_controller->startAnimation(60000); // 1 minute
 	}
 	else
 	{
