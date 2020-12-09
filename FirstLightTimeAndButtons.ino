@@ -81,6 +81,11 @@ void loop()
 	{
 		// Display time state
 		lights->displayTime(clock->getHour(), clock->getMin(), clock->getSec());
+		// Serial.print(clock->getHour());
+		// Serial.print(":");
+		// Serial.print(clock->getMin());
+		// Serial.print(":");
+		// Serial.println(clock->getSec());
 	}
 	else if (stateIndex == 4)
 	{
@@ -152,7 +157,7 @@ void colorStateAction(bool up, bool down)
 	}
 	if (colorState == 0)
 	{
-		byte rgb[3] = {0, 0, 255};
+		byte rgb[3] = {255, 0, 0};
 		lights->setAllToColor(rgb);
 	}
 	else if (colorState == 1)
@@ -168,7 +173,7 @@ void colorStateAction(bool up, bool down)
 	
 	else if (colorState == 3)
 	{
-		byte rgb[3] = {255, 0, 0};
+		byte rgb[3] = {0, 0, 255};
 		lights->setAllToColor(rgb);
 	}
 	else if (colorState == 4)
