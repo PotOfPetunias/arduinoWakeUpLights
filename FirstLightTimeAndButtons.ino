@@ -9,8 +9,10 @@
 
 // Time to make animation last in minutes
 static int sweeptime = 30;
-static int alarm_hour = 5;
-static int alarm_min = 20;
+// Alarm Time (Time animation will start aka. sweeptime before you want to wake up)
+static int alarm_hour[2] = { 5,  4};
+static int alarm_min[2] =  {20, 30};
+static int current_alarm = 0;
 
 #define NUM_STATES 5
 static uint8_t stateIndex = 0;
@@ -65,7 +67,7 @@ void loop()
 	if (stateIndex == 0)
 	{
 		// Alarm state
-		alarmStateAction();
+		alarmStateAction(up_was_pressed, down_was_pressed);
 	}
 	else if (stateIndex == 1)
 	{
@@ -113,18 +115,54 @@ void handleStateChange()
 	}
 }
 
-void alarmStateAction()
+void alarmStateAction(bool up, bool down)
 {
 	if (light_show_controller->isAnimationRunning())
 	{
 		light_show_controller->animationUpdate();
 	}
-	else if (clock->getHour() == alarm_hour && clock->getMin() == alarm_min)
+	else if (clock->getHour() == alarm_hour[current_alarm] && clock->getMin() == alarm_min[current_alarm])
 	{
 		unsigned long second = 1000;
 		unsigned long minute = 60;
 		light_show_controller->startAnimation(second * minute * sweeptime);
 		Serial.println("Animation Started");
+	}
+	if (up)
+	{
+		size_t last_index = (sizeof(alarm_hour) / sizeof(alarm_hour[0])) - 1;
+		size_t first_index = 0;
+		// If current alarm is the last alarm in the list 
+        if (current_alarm >= last_index)
+		{
+			// For now do nothing so I can know for sure that I am using the second alarm without having 
+			// feedback from the lights.
+			// current_alarm = first_index;
+		}
+		else
+		{
+			current_alarm++;
+		}
+		Serial.print("Now using alarm: ");
+		Serial.println(current_alarm);
+	}
+	else if (down)
+	{
+		size_t last_index = (sizeof(alarm_hour) / sizeof(alarm_hour[0])) - 1;
+		size_t first_index = 0;
+		// If current alarm is the last alarm in the list 
+        if (current_alarm <= first_index)
+		{
+			// For now do nothing so I can know for sure that I am using the second alarm without having 
+			// feedback from the lights.
+			// current_alarm = last_index;
+		}
+		else
+		{
+			current_alarm--;
+		}
+		Serial.print("Now using alarm: ");
+		Serial.println(current_alarm);
 	}
 	// else
 	// {
