@@ -18,6 +18,8 @@ static int current_alarm = 0;
 static uint8_t stateIndex = 0;
 
 static uint8_t colorState = 0;
+static uint8_t alarmState = 2;
+unsigned long time_of_start_show_alarm = 0;
 
 ButtonHandler *up_btn;
 ButtonHandler *down_btn;
@@ -28,7 +30,7 @@ ClockHandler *clock;
 
 void setup() 
 {
-	delay(1000);
+	// delay(1000);
 
 	// Setup serial output
 	Serial.begin(9600);
@@ -49,20 +51,13 @@ void setup()
 	down_btn = new ButtonHandler(BTN_DOWN);
 	state_btn = new ButtonHandler(BTN_STATE);
 
-	// Signal successful start with led
-	for (int i = 0; i < 3; i++)
-	{
-		digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-		delay(200);                       // wait for a second
-		digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-		delay(200);
-	}
+	digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
 }
 void loop()
 {
 	bool up_was_pressed = up_btn->beenPressed();
 	bool down_was_pressed = down_btn->beenPressed();
-	handleStateChange();
+	handleStateButton();
 
 	if (stateIndex == 0)
 	{
@@ -100,7 +95,7 @@ void loop()
 
 }
 
-void handleStateChange()
+void handleStateButton()
 {
 	if (state_btn->beenPressed())
 	{
@@ -108,6 +103,12 @@ void handleStateChange()
 			stateIndex = 0;
 		else
 			stateIndex += 1;
+		
+		if (stateIndex == 0)
+		{
+			alarmState = 2;
+			time_of_start_show_alarm = millis();
+		}
 		lights->turnOff();
 		light_show_controller->stopAnimation();
 		Serial.print("Now in state: ");
@@ -117,27 +118,39 @@ void handleStateChange()
 
 void alarmStateAction(bool up, bool down)
 {
-	if (light_show_controller->isAnimationRunning())
+	if (alarmState == 1 && light_show_controller->isAnimationRunning())
 	{
 		light_show_controller->animationUpdate();
 	}
-	else if (clock->getHour() == alarm_hour[current_alarm] && clock->getMin() == alarm_min[current_alarm])
+	else if (alarmState == 0 && clock->getHour() == alarm_hour[current_alarm] && clock->getMin() == alarm_min[current_alarm])
 	{
 		unsigned long second = 1000;
 		unsigned long minute = 60;
 		light_show_controller->startAnimation(second * minute * sweeptime);
 		Serial.println("Animation Started");
+		alarmState = 1;
+	}
+	else if(alarmState == 2)
+	{
+		// Show alarm index???
+		lights->displayTime(alarm_hour[current_alarm], alarm_min[current_alarm], 0);
+		unsigned long diff = millis() - time_of_start_show_alarm;
+		if (diff > 10000)
+		{
+			lights->turnOff();
+			alarmState = 0;
+		}
 	}
 	if (up)
 	{
 		size_t last_index = (sizeof(alarm_hour) / sizeof(alarm_hour[0])) - 1;
 		size_t first_index = 0;
+		light_show_controller->stopAnimation();
+		lights->turnOff();
 		// If current alarm is the last alarm in the list 
         if (current_alarm >= last_index)
 		{
-			// For now do nothing so I can know for sure that I am using the second alarm without having 
-			// feedback from the lights.
-			// current_alarm = first_index;
+			current_alarm = first_index;
 		}
 		else
 		{
@@ -145,17 +158,19 @@ void alarmStateAction(bool up, bool down)
 		}
 		Serial.print("Now using alarm: ");
 		Serial.println(current_alarm);
+		alarmState = 2;
+		time_of_start_show_alarm = millis();
 	}
 	else if (down)
 	{
 		size_t last_index = (sizeof(alarm_hour) / sizeof(alarm_hour[0])) - 1;
 		size_t first_index = 0;
+		light_show_controller->stopAnimation();
+		lights->turnOff();
 		// If current alarm is the last alarm in the list 
         if (current_alarm <= first_index)
 		{
-			// For now do nothing so I can know for sure that I am using the second alarm without having 
-			// feedback from the lights.
-			// current_alarm = last_index;
+			current_alarm = last_index;
 		}
 		else
 		{
@@ -163,6 +178,8 @@ void alarmStateAction(bool up, bool down)
 		}
 		Serial.print("Now using alarm: ");
 		Serial.println(current_alarm);
+		alarmState = 2;
+		time_of_start_show_alarm = millis();
 	}
 	// else
 	// {
@@ -235,27 +252,3 @@ void colorStateAction(bool up, bool down)
 		lights->setAllToColor(rgb);
 	}
 }
-
-	// if (up_btn->beenPressed())
-	// {
-	// 	Serial.println("Up pressed: enter state 1");
-	// 	stateIndex = 1;
-	// 	byte rgb[3] = {255, 255, 0};
-	// 	lights->setAllToColor(rgb);
-	// }
-	// if (down_btn->beenPressed())
-	// {
-	// 	Serial.println("Down pressed: enter state 2");
-	// 	stateIndex = 2;
-	// 	byte rgb[3] = {255, 0, 255};
-	// 	lights->setAllToColor(rgb);
-	// }
-	// if (state_btn->beenPressed())
-	// {
-	// 	Serial.println("State pressed: enter state 3");
-	// 	stateIndex = 3;
-	// }
-	// if (stateIndex == 3)
-	// {
-	// 	lights->displayTime(clock->getHour(), clock->getMin());
-	// }
