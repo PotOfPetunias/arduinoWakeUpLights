@@ -10,8 +10,8 @@
 // Time to make animation last in minutes
 static int sweeptime = 30;
 // Alarm Time (Time animation will start aka. sweeptime before you want to wake up)
-static int alarm_hour[2] = { 5,  4};
-static int alarm_min[2] =  {20, 30};
+static int alarm_hour[3] = { 5,  5,  4};
+static int alarm_min[3] =  {25, 00, 30};
 static int current_alarm = 0;
 
 #define NUM_STATES 5
@@ -135,7 +135,7 @@ void alarmStateAction(bool up, bool down)
 		// Show alarm index???
 		lights->displayTime(alarm_hour[current_alarm], alarm_min[current_alarm], 0);
 		unsigned long diff = millis() - time_of_start_show_alarm;
-		if (diff > 10000)
+		if (diff > 6000)
 		{
 			lights->turnOff();
 			alarmState = 0;
