@@ -30,7 +30,7 @@ public:
     void setColorAt(int i, byte color[3]);
 	void setColorAt(int i, unsigned long color);
     void turnOff();
-    void displayTime(uint8_t hour, uint8_t min, uint8_t sec);
+	void displayTime(uint8_t hour, uint8_t min, uint8_t sec, byte hColor[3], byte mColor[3], byte sColor[3], byte sepColor[3]);
 };
 
 LightHandler::LightHandler(int nothing)
@@ -65,12 +65,8 @@ void LightHandler::turnOff()
     this->setAllToColor(rgb);
 }
 
-void LightHandler::displayTime(uint8_t hour, uint8_t min, uint8_t sec)
+void LightHandler::displayTime(uint8_t hour, uint8_t min, uint8_t sec, byte hColor[3], byte mColor[3], byte sColor[3], byte sepColor[3])
 {
-	byte hColor[3] = {0, 255, 0};
-	byte mColor[3] = {255, 0, 0};
-	byte sColor[3] = {0, 0, 255};
-	byte sepColor[3] = {255, 255, 255};
 	unsigned long hc_l = rgb_to_long(hColor);
 	unsigned long mc_l = rgb_to_long(mColor);
 	unsigned long sc_l = rgb_to_long(sColor);

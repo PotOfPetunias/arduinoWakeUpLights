@@ -77,7 +77,11 @@ void loop()
 	else if (stateIndex == 3)
 	{
 		// Display time state
-		lights->displayTime(clock->getHour(), clock->getMin(), clock->getSec());
+		byte hColor[3]={0, 255, 0};
+		byte mColor[3]={255, 0, 0};
+		byte sColor[3]={0, 0, 255};
+		byte sepColor[3]={255, 255, 255};
+		lights->displayTime(clock->getHour(), clock->getMin(), clock->getSec(), hColor, mColor, sColor, sepColor);
 		// Serial.print(clock->getHour());
 		// Serial.print(":");
 		// Serial.print(clock->getMin());
@@ -133,7 +137,12 @@ void alarmStateAction(bool up, bool down)
 	else if(alarmState == 2)
 	{
 		// Show alarm index???
-		lights->displayTime(alarm_hour[current_alarm], alarm_min[current_alarm], 0);
+		byte hColor[3] =   {255, 0, 0};
+		byte mColor[3] =   {255, 0, 0};
+		byte sColor[3] =   {255, 0, 0};
+		byte sepColor[3] = {8, 8, 8};
+		lights->displayTime(alarm_hour[current_alarm], alarm_min[current_alarm], 0, hColor, mColor, sColor, sepColor);
+
 		unsigned long diff = millis() - time_of_start_show_alarm;
 		if (diff > 6000)
 		{
