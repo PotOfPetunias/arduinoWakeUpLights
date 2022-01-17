@@ -15,7 +15,7 @@
 class LightHandler
 {
 private:
-    CRGB leds[NUM_LEDS] = {0,0,0,0,255,0,0,0,0,0};
+    CRGB leds[NUM_LEDS] = {0,0,0,0,0,0,0,0,0,0};
     // byte light_data[NUM_LEDS][3];
     unsigned long rgb_to_long(byte rgb[3]);
 	void display6bit(uint8_t num, uint8_t bigEndLoc, unsigned long mc_l);
@@ -27,6 +27,8 @@ public:
 	void light_data_out(unsigned long l_data[NUM_LEDS]);
     void setAllToColor(byte color[3]);
 	void setAllToColor(unsigned long color);
+    void setColorAt(int i, byte color[3]);
+	void setColorAt(int i, unsigned long color);
     void turnOff();
     void displayTime(uint8_t hour, uint8_t min, uint8_t sec);
 };
@@ -103,6 +105,26 @@ void LightHandler::displayTime(uint8_t hour, uint8_t min, uint8_t sec)
 		this->display6bit(sec, 25, sc_l);
 	}
 }
+
+void LightHandler::setColorAt(int i, unsigned long color)
+{
+    if ( i >= 0 && i < NUM_LEDS)
+    {
+        leds[i] = color;
+    }
+    FastLED.show();
+}
+
+void LightHandler::setColorAt(int i, byte color[3])
+{
+    unsigned long color_l = rgb_to_long(color);
+    if ( i >= 0 && i < NUM_LEDS)
+    {
+        leds[i] = color_l;
+    }
+    FastLED.show();
+}
+
 
 void LightHandler::display6bit(uint8_t num, uint8_t bigEndLoc, unsigned long color_l)
 {
