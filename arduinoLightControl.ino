@@ -136,7 +136,7 @@ void alarmStateAction(bool up, bool down)
 	}
 	else if(alarmState == 2)
 	{
-		// Show alarm index???
+		// Show time that alarm will begin its sequence (wake up sweeptime after that)
 		byte hColor[3] =   {255, 0, 0};
 		byte mColor[3] =   {255, 0, 0};
 		byte sColor[3] =   {255, 0, 0};
