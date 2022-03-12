@@ -67,12 +67,12 @@ void loop()
 	else if (stateIndex == 1)
 	{
 		// Color play state
-		sunTestStateAction(up_was_pressed, down_was_pressed);
+		colorStateAction(up_was_pressed, down_was_pressed);
 	}
 	else if (stateIndex == 2)
 	{
-		// Color play state
-		colorStateAction(up_was_pressed, down_was_pressed);
+		// Sun rise test state
+		sunTestStateAction(up_was_pressed, down_was_pressed);
 	}
 	else if (stateIndex == 3)
 	{
@@ -201,7 +201,7 @@ void sunTestStateAction(bool up, bool down)
 {
 	if (!light_show_controller->isAnimationRunning() || up || down)
 	{
-		light_show_controller->startAnimation(60000); // 1 minute
+		light_show_controller->startAnimation(120000); // 2 minutes
 	}
 	else
 	{
