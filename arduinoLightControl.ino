@@ -10,8 +10,8 @@
 // Time to make animation last in minutes
 static int sweeptime = 30;
 // Alarm Time (Time animation will start aka. sweeptime before you want to wake up)
-static int alarm_hour[3] = { 5,  5,  4};
-static int alarm_min[3] =  {25, 00, 30};
+static int alarm_hour[7] = { 5,  7,  6,  6,  5,  5,  4};
+static int alarm_min[7] =  {25, 00, 30, 00, 30, 00, 30};
 static int current_alarm = 0;
 
 #define NUM_STATES 5
